@@ -38,7 +38,8 @@ public:
     void install_prohibition_place(int y, int x);
 
     List<Coor_cell> find_not_illuminate_seat();
-    
+    bool is_not_neighbor_black_cell(int _y, int _x);
+
     List<Coor_cell> find_seats_around_black_cell();
     List<Coor_cell> make_coor_black_cells();
     

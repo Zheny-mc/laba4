@@ -7,6 +7,8 @@ int main()
     
     game.install_prohibition_places();
     game.install_obvious_lanterns_around_black_cells();
-
+    game.install_empty_cells();
+    
+    
     return 0;
 }

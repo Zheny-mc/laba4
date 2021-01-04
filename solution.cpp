@@ -32,8 +32,7 @@ void Solution::install_empty_cells()
 
     while (!places.empty())
     {
-        for (int i = 0; i < places.size(); i++)
-            install_lantern(places[i].y, places[i].x);
+        install_lantern(places[0].y, places[0].x);
             
         cout << to_show() << endl;
 

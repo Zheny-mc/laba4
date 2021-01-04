@@ -104,12 +104,42 @@ List<Coor_cell> Field::find_not_illuminate_seat()
             if ( map[y][x].is_white() && 
                 !map[y][x].is_lantern() && 
                 !map[y][x].is_mark_prohidited_cell() &&
-                !map[y][x].is_illuminated_cell() )
+                !map[y][x].is_illuminated_cell() &&
+                is_not_neighbor_black_cell(y, x) )
+            {
                 seats.push_back(Coor_cell(y, x));
+                goto out;
+            }
         }
     }
 
-    return seats;
+    out:
+        return seats;
+}
+
+bool Field::is_not_neighbor_black_cell(int _y, int _x)
+{
+    bool neighbor = false;
+
+    int y, x;
+    //вверх
+    y = _y - 1;
+    if (is_check_board(y, _x) && map[y][_x].is_black() && map[y][_x].get_number() != 5)
+        neighbor = true;
+    //вниз
+    y = _y + 1;
+    if (is_check_board(y, _x) && map[y][_x].is_black() && map[y][_x].get_number() != 5)
+        neighbor = true;
+    //влево
+    x = _x - 1;
+    if (is_check_board(_y, x) && map[_y][x].is_black() && map[y][_x].get_number() != 5)
+        neighbor = true;
+    //вправо
+    x = _x + 1;
+    if (is_check_board(_y, x) && map[_y][x].is_black() && map[y][_x].get_number() != 5)
+        neighbor = true;    
+
+    return !neighbor;
 }
 
 List<Coor_cell> Field::make_coor_black_cells()
