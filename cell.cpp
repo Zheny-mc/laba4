@@ -77,12 +77,12 @@ bool Cell::is_illuminated_cell()
 
 void Cell::set_mark_prohidited()
 {
-    put_lantern = true;//поставить фонарь нельзя
+    put_lantern = true; //поставить фонарь нельзя
 }
 
 void Cell::delete_mark_prohidited()
 {
-    put_lantern = false;
+    put_lantern = false; //поставить фонарь можно
 }
 
 bool Cell::is_mark_prohidited_cell()

@@ -30,7 +30,7 @@ Field::Field()
                 map[y][x].set_color(BLACK);
                 map[y][x].set_number( to_int(cur_value) );
 
-                coor_black_cell.push_back(Coor_cell(y, x));
+                coor_black_cell.push_back(Coor_cell(y, x, to_int(cur_value)));
             }
         }
     }
@@ -50,7 +50,50 @@ int Field::get_size()
     return SIZE;
 }
 
-List<Coor_cell> Field::find_free_seats()
+List<Coor_cell> Field::find_prohibition_places()
+{
+    List<Coor_cell> seats;
+    int y, x;
+    int _y, _x;
+
+    for (int i = 0; i < coor_black_cell.size(); i++)
+    {
+        if (coor_black_cell[i].number == PROHIBITION_PLACES)
+        {
+            _y = coor_black_cell[i].y;
+            _x = coor_black_cell[i].x;
+
+            //вверх
+            y = _y - 1;
+            if (is_check_board(y, _x) && map[y][_x].is_white())
+                seats.push_back(Coor_cell(y, _x));
+            
+            //вниз
+            y = _y + 1;
+            if (is_check_board(y, _x) && map[y][_x].is_white())
+                seats.push_back(Coor_cell(y, _x));
+            
+            //влево
+            x = _x - 1;
+            if (is_check_board(_y, x) && map[_y][x].is_white())
+                seats.push_back(Coor_cell(_y, x));
+            
+            //вправо
+            x = _x + 1;
+            if (is_check_board(_y, x) && map[_y][x].is_white())
+                seats.push_back(Coor_cell(_y, x));    
+        }
+    }
+
+    return seats;
+}
+
+void Field::install_prohibition_place(int y, int x)
+{
+    map[y][x].set_mark_prohidited();
+}
+
+List<Coor_cell> Field::find_not_illuminate_seat()
 {
     List<Coor_cell> seats;
     
@@ -69,32 +112,82 @@ List<Coor_cell> Field::find_free_seats()
     return seats;
 }
 
-List<Coor_cell> Field::find_seats_for_black_cell(int _y, int _x)
+List<Coor_cell> Field::make_coor_black_cells()
 {
     List<Coor_cell> seats;
     int y, x;
+    int _y, _x;
+    
+    for (int i = 0; i < coor_black_cell.size(); i++)
+    {
+        if (coor_black_cell[i].number != PROHIBITION_PLACES)
+        {
+            int num_lampern = 0;
+            _y = coor_black_cell[i].y;
+            _x = coor_black_cell[i].x;
+            
+            //вверх
+            y = _y - 1;
+            if (is_check_board(y, _x) && (!map[y][_x].is_mark_prohidited_cell() && !map[y][_x].is_illuminated_cell()) )
+                num_lampern++;
+            
+            //вниз
+            y = _y + 1;
+            if (is_check_board(y, _x) && (!map[y][_x].is_mark_prohidited_cell() && !map[y][_x].is_illuminated_cell()) )
+                num_lampern++;
+            
+            //влево
+            x = _x - 1;
+            if (is_check_board(_y, x) && (!map[_y][x].is_mark_prohidited_cell() && !map[_y][x].is_illuminated_cell()) )
+                num_lampern++;
+            
+            //вправо
+            x = _x + 1;
+            if (is_check_board(_y, x) && (!map[_y][x].is_mark_prohidited_cell() && !map[_y][x].is_illuminated_cell()) )
+                num_lampern++;
 
-    //вверх
-    y = _y - 1;
-    if (!map[y][_x].is_mark_prohidited_cell() && is_check_board(y, _x))
-        seats.push_back(Coor_cell(y, _x));
+            if (coor_black_cell[i].number == num_lampern)
+                seats.push_back(coor_black_cell[i]);
+        }        
+    }
     
-    //вниз
-    y = _y + 1;
-    if (!map[y][_x].is_mark_prohidited_cell() && is_check_board(y, _x))
-        seats.push_back(Coor_cell(y, _x));
-    
-    //влево
-    x = _x - 1;
-    if (!map[_y][x].is_mark_prohidited_cell() && is_check_board(_y, x))
-        seats.push_back(Coor_cell(_y, x));
-    
-    //вправо
-    x = _x + 1;
-    if (!map[_y][x].is_mark_prohidited_cell() && is_check_board(_y, x))
-        seats.push_back(Coor_cell(_y, x));    
-
     return seats;
+}
+
+List<Coor_cell> Field::find_seats_around_black_cell()
+{
+    List<Coor_cell> seats = make_coor_black_cells();
+    List<Coor_cell> coor_lampern;
+    int y, x;
+    int _y, _x;
+    
+    for (int i = 0; i < seats.size(); i++)
+    { 
+        _y = seats[i].y;
+        _x = seats[i].x;
+        
+        //вверх
+        y = _y - 1;
+        if (is_check_board(y, _x) && (!map[y][_x].is_mark_prohidited_cell() && !map[y][_x].is_illuminated_cell()) )
+            coor_lampern.push_back(Coor_cell(y, _x));
+        
+        //вниз
+        y = _y + 1;
+        if (is_check_board(y, _x) && (!map[y][_x].is_mark_prohidited_cell() && !map[y][_x].is_illuminated_cell()) )
+            coor_lampern.push_back(Coor_cell(y, _x));
+        
+        //влево
+        x = _x - 1;
+        if (is_check_board(_y, x) && (!map[_y][x].is_mark_prohidited_cell() && !map[_y][x].is_illuminated_cell()) )
+            coor_lampern.push_back(Coor_cell(_y, x));
+        
+        //вправо
+        x = _x + 1;
+        if (is_check_board(_y, x) && (!map[_y][x].is_mark_prohidited_cell() && !map[_y][x].is_illuminated_cell()) )
+            coor_lampern.push_back(Coor_cell(_y, x));
+    }
+    
+    return coor_lampern;
 }
 
 void Field::mark_illuminated_area(int _y, int _x)
@@ -204,25 +297,25 @@ string Field::to_show()
         for (int x = 0; x < SIZE; x++)
         {
             if (map[y][x].is_black())
-                ss << bg_black << fg_white << map[y][x].get_number() << fg_def;
+                ss << bg_black << fg_white << map[y][x].get_number() << fg_def << bg_def;
             if (map[y][x].is_white())
             {
                 if (!map[y][x].is_illuminated_cell())
                 {
                     if (map[y][x].is_mark_prohidited_cell())
-                        ss << bg_white << 'x';
+                        ss << bg_white << 'x' << bg_def;
                     else 
-                        ss << bg_white << ' ';
+                        ss << bg_white << ' ' << bg_def;
                 }    
                 else if (map[y][x].is_illuminated_cell() && !map[y][x].is_lantern())
                 {
                     if (map[y][x].is_mark_prohidited_cell())
-                        ss << bg_blue << 'x';
+                        ss << bg_blue << 'x' << bg_def;
                     else                
-                        ss << bg_blue << ' ';
+                        ss << bg_blue << ' ' << bg_def;
                 }
                 else if (map[y][x].is_illuminated_cell() && map[y][x].is_lantern())
-                    ss << bg_blue << fg_yellow << '*' << fg_def;
+                    ss << bg_blue << fg_yellow << '*' << fg_def << bg_def;
             }  
                 
         }

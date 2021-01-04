@@ -1,21 +1,42 @@
 #include "solution.h"
 
-void Solution::install_obvious_lanterns()
+void Solution::install_prohibition_places()
 {
-    //List<Coor_cell> lantern = field.coor_black_cell;
+    List<Coor_cell> places = find_prohibition_places();
     
-    //for (int i = 0; i < ; i++)
+    for (int i = 0; i < places.size(); i++)
+        install_prohibition_place(places[i].y, places[i].x);
+
+    cout << to_show() << endl;
+}
+
+void Solution::install_obvious_lanterns_around_black_cells()
+{
+    List<Coor_cell> places = find_seats_around_black_cell();
+
+    while (!places.empty())
     {
+        for (int i = 0; i < places.size(); i++)
+            install_lantern(places[i].y, places[i].x);
+        cout << to_show() << endl;
 
+        places = find_seats_around_black_cell();
     }
+
+    //cout << to_show() << endl;
 }
 
-void Solution::install_mark_places()
+void Solution::install_empty_cells()
 {
+    List<Coor_cell> places = find_not_illuminate_seat();
 
-}
+    while (!places.empty())
+    {
+        for (int i = 0; i < places.size(); i++)
+            install_lantern(places[i].y, places[i].x);
+            
+        cout << to_show() << endl;
 
-void Solution::find_solution()
-{
-
+        places = find_not_illuminate_seat();
+    }
 }

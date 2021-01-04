@@ -1,18 +1,13 @@
 #include "field.h"
 
-
-class Solution
+class Solution : public Field
 {
 public:
-    Solution(){}
+    void install_prohibition_places();
+    void install_obvious_lanterns_around_black_cells();
+    void install_empty_cells();
 
-    void install_obvious_lanterns();
-    void install_mark_places();
-    
-    void find_solution();
-
-private:
-    Field field;
+    //void find_solution();
 };
 
 

@@ -26,12 +26,14 @@ private:
 
 public:
     List() : head(NULL), end(NULL), SIZE(0) {}
+    List(const List<LT>& obj) : head(obj.head), end(obj.end), SIZE(obj.SIZE) {}
     ~List();
 
-    void push_back(const LT& _data); // добавление в конец списка
-    void pop      (int index);       // удаление index элемнта
-    void print    ();                //вывод всего списка
-    LT& operator[](const int index); //дооступ к элементу
+    void push_back(const LT& _data);       // добавление в конец списка
+    void pop      (int index);             // удаление index элемнта
+    void print    ();                      // вывод всего списка
+    LT& operator[](const int index);       // дооступ к элементу
+    List<LT>& operator=(List<LT>&& r_obj); // перемещение
 
     bool empty() { return (SIZE == 0)? true : false; } // проверка на пустоту списка
     int  size()  { return SIZE; }                      // определение размера списка
@@ -114,11 +116,11 @@ void List<LT>::pop(int index)
         delete(tmp);
 
         SIZE--; // уменьшаем размер списка
+        return;
     }
-    else
-    {
-        throw -1;
-    }
+    
+    throw std::invalid_argument("Error delete element");
+  
 
 }
 template<typename LT>
@@ -142,4 +144,38 @@ LT& List<LT>::operator[](const int index)
 
     //индекс введен с ошибкой, возврат исключения
     throw std::invalid_argument("Error index");
+}
+
+template<typename LT>
+List<LT>& List<LT>::operator=(List<LT>&& r_obj)
+{    
+    if (&r_obj == this)
+        return *this;
+
+    //очистка списка
+    if (head != NULL)
+    {
+        Node<LT>* tmp;
+
+        for (int i = 0; i < SIZE-1; i++)
+        {
+            tmp = head;
+            head = head->next;
+            delete tmp;
+        }
+
+        head->next = NULL;
+        delete head;
+    }
+
+    head = r_obj.head; 
+    end =  r_obj.end; 
+    SIZE = r_obj.SIZE;
+
+    //отнимаем
+    r_obj.head = NULL; 
+    r_obj.end = NULL; 
+    r_obj.SIZE = 0;
+
+    return *this;
 }
